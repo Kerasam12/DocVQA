@@ -2,14 +2,28 @@ import random
 import torch
 from torch.utils.data import Dataset
 from PIL import Image
+import json
+import os
+
+from transformers import T5Tokenizer, T5Model
+
+
+
 
 class SP_VQADataset(Dataset):
-    def __init__(self, annotations_dir, ocr_dir, images_dir, transform):
+    def __init__(self, annotations_dir, ocr_dir, images_dir, transform,max_len_bbox,max_len_str, tokenizer, max_len_question,max_len_answer):
         # Initialize the ColorizationDataset class with the specified root directory and transformation
+        self.max_len_str = max_len_str
+        self.max_len_bbox = max_len_bbox
+        #self.eos_char = eos_char
+        self.max_len_question = max_len_question
+        self.max_len_answer = max_len_answer
         self.annotations_dir = annotations_dir
+    
         self.ocr_dir = ocr_dir
         self.images_dir = images_dir
         self.transform = transform
+        self.tokenizer = tokenizer 
         #self.transform = transform
         # Get a list of image files in the root directory
         self.ocr_files = [f for f in os.listdir(ocr_dir) if os.path.isfile(os.path.join(ocr_dir, f))]
@@ -47,15 +61,21 @@ class SP_VQADataset(Dataset):
             question, questionId = self.get_questions(annotations_data)
             context,context_bbox,context_txt = self.process_ocr(ocr)
             answer, start_answ_idx, end_answ_idx = self.get_start_end_answer_idx(context, annotations_data)
-        print(len(question), len(context_txt), context_bbox.shape, image.size(), len(answer))   
-        return question, context_txt#, context_bbox, image, answer
+          
+        
+        return {'question':question,
+                'context': context_txt,
+                'context_bbox': context_bbox,
+                'image':image,
+                'answer':answer}
+        #(question, context_bbox, context_txt, image, answer)#, context_bbox, image, answer
     
     def process_ocr(self, ocr):
         context = [txt['text'] for txt in ocr['recognitionResults'][0]['lines']]#get all the text in the image by sentences recognized by the OCR
         context_bbox = []
         context_txt = []
         padding_bbox = torch.tensor([[0,0], [0,0], [0,0], [0,0]])
-        max_bb = 250
+        #max_bb = 290
         
         
         
@@ -64,27 +84,30 @@ class SP_VQADataset(Dataset):
         for d in data:
             
             context_bbox.append(d['boundingBox'])#get all the bounding boxes of the text in the image by words 
-
             context_txt.append(d['text'])#get all the text in the image by words 
             
-        pad_len = max_bb - len(context_bbox) 
-        expanded_bbox = padding_bbox.unsqueeze(0).expand(pad_len, -1, -1)
+        pad_len_bbox = self.max_len_bbox - len(context_bbox) 
+        #pad_len_txt = max(0,self.max_len_str - len(context_txt))
+        #pad_list = [self.eos_char]
+        context_txt = ' '.join(context_txt)
+        caption_encoded = self.tokenizer.encode(context_txt, max_length=self.max_len_str, pad_to_max_length=True, return_attention_mask=True, return_token_type_ids=False, truncation=True,return_tensors = 'pt')
         
-             
+        expanded_bbox = padding_bbox.unsqueeze(0).repeat(pad_len_bbox, 1, 1)
         context_bbox = torch.tensor(context_bbox).reshape((len(context_bbox),4,2))
+        context_bbox = torch.cat([context_bbox, expanded_bbox], dim=0)# Concatenate along the first dimension   
         
-        # Concatenate along the first dimension
-        context_bbox = torch.cat([context_bbox, expanded_bbox], dim=0)   
-        
-        return context,context_bbox,context_txt
+        #print(context_txt)
+        return context,context_bbox,caption_encoded
 
     def get_questions(self, annotations_data):
         question = annotations_data['question']
+        question_encoded = self.tokenizer.encode(question, max_length=self.max_len_question, pad_to_max_length=True, return_attention_mask=True, return_token_type_ids=False, truncation=True,return_tensors = 'pt')
         questionId = annotations_data['questionId']
-        return question, questionId
+        return question_encoded, questionId
     
     def get_start_end_answer_idx(self, context, annotations_data):
         answers = annotations_data['answers']
+        answer_encoded = self.tokenizer.encode(answers, max_length=self.max_len_answer, pad_to_max_length=True, return_attention_mask=True, return_token_type_ids=False, truncation=True,return_tensors = 'pt')
         context_joined = "".join(context)
         answer_positions = []
         for answer in answers:
@@ -100,4 +123,4 @@ class SP_VQADataset(Dataset):
         else:
             start_idx, end_idx = 0, 0  # If the indices are out of the sequence length they are ignored. Therefore, we set them as a very big number.
 
-        return answer, start_idx, end_idx
+        return answer_encoded, start_idx, end_idx

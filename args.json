@@ -1,0 +1,4 @@
+{
+    "MAX_LEN_STR" :512,
+    "TOKENIZER":"T5Tokenizer.from_pretrained('t5-small')"
+}

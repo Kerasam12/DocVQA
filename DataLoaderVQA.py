@@ -8,22 +8,31 @@ import os
 from transformers import T5Tokenizer, T5Model
 
 
+kwargs = {
+    "MAX_LEN_STR" :512,
+    "TOKENIZER": T5Tokenizer.from_pretrained('t5-small'),
+    "MAX_LEN_BBOX":290,
+    "MAX_LEN_QUESTION":80,
+    "MAX_LEN_ANSWER":50
+}
+
 
 
 class SP_VQADataset(Dataset):
-    def __init__(self, annotations_dir, ocr_dir, images_dir, transform,max_len_bbox,max_len_str, tokenizer, max_len_question,max_len_answer):
+    def __init__(self, annotations_dir, ocr_dir, images_dir, transform, **kwargs): 
+        #max_len_bbox,max_len_str, tokenizer, max_len_question,max_len_answer):
         # Initialize the ColorizationDataset class with the specified root directory and transformation
-        self.max_len_str = max_len_str
-        self.max_len_bbox = max_len_bbox
+        self.max_len_str = kwargs['MAX_LEN_STR']#max_len_str
+        self.max_len_bbox = kwargs['MAX_LEN_BBOX']#max_len_bbox
         #self.eos_char = eos_char
-        self.max_len_question = max_len_question
-        self.max_len_answer = max_len_answer
+        self.max_len_question = kwargs['MAX_LEN_QUESTION']#max_len_question
+        self.max_len_answer = kwargs['MAX_LEN_ANSWER']#max_len_answer
         self.annotations_dir = annotations_dir
     
         self.ocr_dir = ocr_dir
         self.images_dir = images_dir
         self.transform = transform
-        self.tokenizer = tokenizer 
+        self.tokenizer = kwargs['TOKENIZER']#tokenizer 
         #self.transform = transform
         # Get a list of image files in the root directory
         self.ocr_files = [f for f in os.listdir(ocr_dir) if os.path.isfile(os.path.join(ocr_dir, f))]
@@ -101,6 +110,29 @@ class SP_VQADataset(Dataset):
 
     def get_questions(self, annotations_data):
         question = annotations_data['question']
+        question_encoded = self.tokenizer.encode(question, max_length=self.max_len_question, pad_to_max_length=True, return_attention_mask=True, return_token_type_ids=False, truncation=True,return_tensors = 'pt')
+        questionId = annotations_data['questionId']
+        return question_encoded, questionId
+    
+    def get_start_end_answer_idx(self, context, annotations_data):
+        answers = annotations_data['answers']
+        answer_encoded = self.tokenizer.encode(answers, max_length=self.max_len_answer, pad_to_max_length=True, return_attention_mask=True, return_token_type_ids=False, truncation=True,return_tensors = 'pt')
+        context_joined = "".join(context)
+        answer_positions = []
+        for answer in answers:
+            start_idx = context_joined.find(answer)
+
+            if start_idx != -1:
+                end_idx = start_idx + len(answer)
+                answer_positions.append([start_idx, end_idx])
+
+        if len(answer_positions) > 0:
+            start_idx, end_idx = random.choice(answer_positions)  # If both answers are in the context. Choose one randomly.
+            answer = context_joined[start_idx: end_idx]
+        else:
+            start_idx, end_idx = 0, 0  # If the indices are out of the sequence length they are ignored. Therefore, we set them as a very big number.
+
+        return answer_encoded, start_idx, end_idx
         question_encoded = self.tokenizer.encode(question, max_length=self.max_len_question, pad_to_max_length=True, return_attention_mask=True, return_token_type_ids=False, truncation=True,return_tensors = 'pt')
         questionId = annotations_data['questionId']
         return question_encoded, questionId

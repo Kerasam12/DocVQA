@@ -1,4 +1,7 @@
 {
     "MAX_LEN_STR" :512,
-    "TOKENIZER":"T5Tokenizer.from_pretrained('t5-small')"
+    "TOKENIZER":"T5Tokenizer.from_pretrained('t5-small')",
+    "MAX_LEN_BBOX":290,
+    "MAX_LEN_QUESTION":80,
+    "MAX_LEN_ANSWER":50
 }

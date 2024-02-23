@@ -7,6 +7,7 @@ from transformers import AutoFeatureExtractor, AutoModel
 from torch.nn import CrossEntropyLoss
 from torch.nn import LayerNorm as BertLayerNorm
 
+device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
 class CustomT5Config(T5Config):
     def __init__(self, max_2d_position_embeddings=1024,  **kwargs):
@@ -107,18 +108,18 @@ class VisualEmbeddings(nn.Module):
 
     def forward(self, images, page_idx_mask=None):
         inputs = self.feature_extractor(images=images, return_tensors="pt")
-        
-        vis_embeddings = self.image_model(inputs.pixel_values.to(self.image_model.device))
+        print(inputs['pixel_values'].size())
+        vis_embeddings = self.image_model(inputs.pixel_values)#.to(self.image_model.device)
         
         vis_embeddings = vis_embeddings.last_hidden_state  # BS; 14x14+CLS (197); 768 (hidden size)
         
         vis_embeddings = self.visual_emb_matcher(vis_embeddings)
 
         if page_idx_mask is not None:
-            vis_attention_mask = torch.zeros(vis_embeddings.shape[:2], dtype=torch.long).to(self.image_model.device)
+            vis_attention_mask = torch.zeros(vis_embeddings.shape[:2], dtype=torch.long)#.to(self.image_model.device)
             vis_attention_mask[page_idx_mask] = 1
         else:
-            vis_attention_mask = torch.ones(vis_embeddings.shape[:2], dtype=torch.long).to(self.image_model.device)
+            vis_attention_mask = torch.ones(vis_embeddings.shape[:2], dtype=torch.long)#.to(self.image_model.device)
 
         return vis_embeddings, vis_attention_mask
 

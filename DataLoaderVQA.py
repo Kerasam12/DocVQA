@@ -68,12 +68,12 @@ class SP_VQADataset(Dataset):
             #ocr_list = ocr['recognitionResults'][0]['lines']
             #data = ocr['recognitionResults'][0]['lines']
             question, questionId = self.get_questions(annotations_data)
-            context,context_bbox,context_txt = self.process_ocr(ocr)
+            context,context_bbox,context_emb = self.process_ocr(ocr)
             answer, start_answ_idx, end_answ_idx = self.get_start_end_answer_idx(context, annotations_data)
           
         
         return {'question':question,
-                'context': context_txt,
+                'context': context_emb,
                 'context_bbox': context_bbox,
                 'image':image,
                 'answer':answer}
@@ -100,7 +100,9 @@ class SP_VQADataset(Dataset):
         #pad_list = [self.eos_char]
         context_txt = ' '.join(context_txt)
         caption_encoded = self.tokenizer.encode(context_txt, max_length=self.max_len_str, pad_to_max_length=True, return_attention_mask=True, return_token_type_ids=False, truncation=True,return_tensors = 'pt')
+        caption_encoded =caption_encoded.squeeze(0)
         
+
         expanded_bbox = padding_bbox.unsqueeze(0).repeat(pad_len_bbox, 1, 1)
         context_bbox = torch.tensor(context_bbox).reshape((len(context_bbox),4,2))
         context_bbox = torch.cat([context_bbox, expanded_bbox], dim=0)# Concatenate along the first dimension   

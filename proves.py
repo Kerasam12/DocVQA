@@ -7,7 +7,7 @@ from DataLoaderVQA import SP_VQADataset
 from VQAModel import ModelVT5
 
 
-device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 kwargs_dir = 'args.json'
@@ -18,9 +18,12 @@ kwargs = {
     "MAX_LEN_QUESTION":80,
     "MAX_LEN_ANSWER":50
 }
-annotations_dir = '/home/jsamper/Desktop/DocVQA/Data/Annotations/train_v1.0_withQT.json'
-ocr_dir = '/home/jsamper/Desktop/DocVQA/Data/OCR'
-images_dir = '/home/jsamper/Desktop/DocVQA/Data/Images'
+#annotations_dir = '/home/jsamper/Desktop/DocVQA/Data/Annotations/train_v1.0_withQT.json'
+annotations_dir = '/home/samper12/Escritorio/CVC/DocVQA/Data/Annotations/train_v1.0_withQT.json'
+#ocr_dir = '/home/jsamper/Desktop/DocVQA/Data/OCR'
+ocr_dir = '/home/samper12/Escritorio/CVC/DocVQA/Data/OCR'
+#images_dir = '/home/jsamper/Desktop/DocVQA/Data/Images'
+images_dir = '/home/samper12/Escritorio/CVC/DocVQA/Data/Images'
 # Create an instance of the custom dataset
 new_width = 1500
 new_height = 2000 

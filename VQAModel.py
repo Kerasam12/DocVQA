@@ -14,6 +14,9 @@ class ModelVT5(nn.Module):
         self.decoder_start_token_id = self.tokenizer.pad_token_id
 
     def concat_embeddings(self,semantic_embed, spatial_embed,visual_embed):
+        #print(semantic_embed)
+        semantic_embed = semantic_embed['last_hidden_state']
+        print(semantic_embed.size(), spatial_embed.size())
         input_embeds = torch.add(semantic_embed, spatial_embed)
         input_embeds = torch.cat([input_embeds, visual_embed], dim=1)  # Concatenate semantic + visual embeddings TODO: Provide visual bounding boxes.
         return input_embeds
@@ -22,6 +25,7 @@ class ModelVT5(nn.Module):
         #input_ids = self.tokenizer(ocr) 
         visual_embed, visual_emb_mask = self.visual_embedding(image)
         spatial_embed = self.spatial_embedding(ocr_bounding_box)
+
         semantic_embed = self.semantic_embedding(input_ids = ocr)
 
         

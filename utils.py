@@ -7,7 +7,7 @@ from transformers import AutoFeatureExtractor, AutoModel
 from torch.nn import CrossEntropyLoss
 from torch.nn import LayerNorm as BertLayerNorm
 
-device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class CustomT5Config(T5Config):
     def __init__(self, max_2d_position_embeddings=1024,  **kwargs):
@@ -90,7 +90,7 @@ class VisualEmbeddings(nn.Module):
         super(VisualEmbeddings, self).__init__()
         model_link = 'microsoft/dit-base-finetuned-rvlcdip'
         self.feature_extractor = AutoFeatureExtractor.from_pretrained(model_link)
-        self.image_model = AutoModel.from_pretrained(model_link)
+        self.image_model = AutoModel.from_pretrained(model_link).to(device)
         self.visual_emb_matcher = MLP(self.image_model.config.hidden_size, 0, self.image_model.config.hidden_size, 1)
 
         '''if not config.visual_module_config.get('finetune', False):
@@ -108,7 +108,8 @@ class VisualEmbeddings(nn.Module):
 
     def forward(self, images, page_idx_mask=None):
         inputs = self.feature_extractor(images=images, return_tensors="pt")
-        print(inputs['pixel_values'].size())
+        inputs = inputs.to(device)
+        #print(inputs['pixel_values'].size())
         vis_embeddings = self.image_model(inputs.pixel_values)#.to(self.image_model.device)
         
         vis_embeddings = vis_embeddings.last_hidden_state  # BS; 14x14+CLS (197); 768 (hidden size)

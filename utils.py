@@ -7,7 +7,7 @@ from transformers import AutoFeatureExtractor, AutoModel
 from torch.nn import CrossEntropyLoss
 from torch.nn import LayerNorm as BertLayerNorm
 
-device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class CustomT5Config(T5Config):
     def __init__(self, max_2d_position_embeddings=1024,  **kwargs):
@@ -25,12 +25,12 @@ class SpatialEmbeddings(nn.Module):
     def __init__(self):#, config
         super(SpatialEmbeddings, self).__init__()
 
-        self.x_position_embeddings = nn.Embedding(
-            4000, 512#config.max_2d_position_embeddings, config.hidden_size
+        self.position_embeddings = nn.Embedding(
+            4500, 64#config.max_2d_position_embeddings, config.hidden_size
         )
-        self.y_position_embeddings = nn.Embedding(
-            4000, 512#config.max_2d_position_embeddings, config.hidden_size
-        )
+        '''self.y_position_embeddings = nn.Embedding(
+            4500, 512#config.max_2d_position_embeddings, config.hidden_size
+        )'''
         # self.h_position_embeddings = nn.Embedding(
         #     config.max_2d_position_embeddings, config.hidden_size
         # )
@@ -46,22 +46,28 @@ class SpatialEmbeddings(nn.Module):
         #self.config = config
 
     def forward(self, bbox):
-        left_position_embeddings = self.x_position_embeddings(bbox[:, :,0])
+        bs, num_bbox, dim = bbox.shape
+        position_embeddings = self.position_embeddings(bbox)
+        print(position_embeddings.shape)
+        '''left_position_embeddings = self.x_position_embeddings(bbox[:, :,0])
         upper_position_embeddings = self.y_position_embeddings(bbox[:, :,1])
         right_position_embeddings = self.x_position_embeddings(bbox[:, :,2])
-        lower_position_embeddings = self.y_position_embeddings(bbox[:, :,3])
+        lower_position_embeddings = self.y_position_embeddings(bbox[:, :,3])'''
 
         # h_position_embeddings = self.h_position_embeddings(bbox[:, :, 3] - bbox[:, :, 1])  # TODO Remove width and height to test how much important are they.
         # w_position_embeddings = self.w_position_embeddings(bbox[:, :, 2] - bbox[:, :, 0])  # TODO Remove width and height to test how much important are they.
-
-        embeddings = (
+        #
+        #print(left_position_embeddings.shape)
+        #print(upper_position_embeddings.shape)
+        '''embeddings = (
                 left_position_embeddings
                 + upper_position_embeddings
                 + right_position_embeddings
                 + lower_position_embeddings
                 # + h_position_embeddings
                 # + w_position_embeddings
-        )
+        )'''
+        embeddings = position_embeddings.reshape(bs, num_bbox,-1)
 
         embeddings = self.LayerNorm(embeddings)
         embeddings = self.dropout(embeddings)
@@ -90,8 +96,9 @@ class VisualEmbeddings(nn.Module):
         super(VisualEmbeddings, self).__init__()
         model_link = 'microsoft/dit-base-finetuned-rvlcdip'
         self.feature_extractor = AutoFeatureExtractor.from_pretrained(model_link)
-        self.image_model = AutoModel.from_pretrained(model_link)
-        self.visual_emb_matcher = MLP(self.image_model.config.hidden_size, 0, self.image_model.config.hidden_size, 1)
+        self.image_model = AutoModel.from_pretrained(model_link).to(device)
+        self.output_hidden_dim = 512 #Change this and put in the args file 
+        self.visual_emb_matcher = MLP(self.image_model.config.hidden_size, 0, self.output_hidden_dim , 1)
 
         '''if not config.visual_module_config.get('finetune', False):
             self.freeze()'''
@@ -108,7 +115,8 @@ class VisualEmbeddings(nn.Module):
 
     def forward(self, images, page_idx_mask=None):
         inputs = self.feature_extractor(images=images, return_tensors="pt")
-        print(inputs['pixel_values'].size())
+        inputs = inputs.to(device)
+        #print(inputs['pixel_values'].size())
         vis_embeddings = self.image_model(inputs.pixel_values)#.to(self.image_model.device)
         
         vis_embeddings = vis_embeddings.last_hidden_state  # BS; 14x14+CLS (197); 768 (hidden size)

@@ -7,7 +7,7 @@ from DataLoaderVQA import SP_VQADataset
 from VQAModel import ModelVT5
 
 
-device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 kwargs_dir = 'args.json'
@@ -29,6 +29,8 @@ reshape_transform = transforms.Compose([
     transforms.ToTensor(),  # Convert the image to a PyTorch tensor
     
 ]) 
+
+
 MAX_LEN_QUESTION = 80
 MAX_LEN_ANSWER = 50
 
@@ -43,6 +45,9 @@ train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 '''for data in train_loader:#, context_txt, context_bbox, image, answer
     print(data['question'], data['context'],data['context_bbox'], data['image'], data['answer'])'''
 model = ModelVT5().to(device)
+tokenizer =  T5Tokenizer.from_pretrained('t5-small')
+
+
 for data in train_loader:
     question = data['question'].to(device)
     context = data['context'].to(device)#ocr tokenized ids text
@@ -51,4 +56,5 @@ for data in train_loader:
     answer = data['answer'].to(device)
 
     output = model.forward(image, context, context_bbox)
-    print(output)
+    out_words = tokenizer.batch_decode(output)
+    print(out_words[0])

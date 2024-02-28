@@ -68,12 +68,12 @@ class SP_VQADataset(Dataset):
             #ocr_list = ocr['recognitionResults'][0]['lines']
             #data = ocr['recognitionResults'][0]['lines']
             question, questionId = self.get_questions(annotations_data)
-            context,context_bbox,context_txt = self.process_ocr(ocr)
+            context,context_bbox,context_emb = self.process_ocr(ocr)
             answer, start_answ_idx, end_answ_idx = self.get_start_end_answer_idx(context, annotations_data)
           
         
         return {'question':question,
-                'context': context_txt,
+                'context': context_emb,
                 'context_bbox': context_bbox,
                 'image':image,
                 'answer':answer}
@@ -83,7 +83,8 @@ class SP_VQADataset(Dataset):
         context = [txt['text'] for txt in ocr['recognitionResults'][0]['lines']]#get all the text in the image by sentences recognized by the OCR
         context_bbox = []
         context_txt = []
-        padding_bbox = torch.tensor([[0,0], [0,0], [0,0], [0,0]])
+        #padding_bbox = torch.tensor([[0,0], [0,0], [0,0], [0,0]])
+        padding_bbox = torch.tensor([0,0, 0,0, 0,0, 0,0])
         #max_bb = 290
         
         
@@ -99,11 +100,15 @@ class SP_VQADataset(Dataset):
         #pad_len_txt = max(0,self.max_len_str - len(context_txt))
         #pad_list = [self.eos_char]
         context_txt = ' '.join(context_txt)
-        caption_encoded = self.tokenizer.encode(context_txt, max_length=self.max_len_str, pad_to_max_length=True, return_attention_mask=True, return_token_type_ids=False, truncation=True,return_tensors = 'pt')
+        caption_encoded = self.tokenizer.encode(context_txt, max_length=self.max_len_str, padding='max_length', return_attention_mask=True, return_token_type_ids=False, truncation=True,return_tensors = 'pt')
+        caption_encoded =caption_encoded.squeeze(0)
         
-        expanded_bbox = padding_bbox.unsqueeze(0).repeat(pad_len_bbox, 1, 1)
-        context_bbox = torch.tensor(context_bbox).reshape((len(context_bbox),4,2))
-        context_bbox = torch.cat([context_bbox, expanded_bbox], dim=0)# Concatenate along the first dimension   
+
+        expanded_bbox = padding_bbox.unsqueeze(0).repeat(pad_len_bbox, 1)
+        context_bbox = torch.tensor(context_bbox).reshape((len(context_bbox),-1))#4,2))
+        #print(expanded_bbox.shape)
+        #print(context_bbox.shape)
+        context_bbox = torch.cat([context_bbox, expanded_bbox], dim=0)# Concatenate the padding along the first dimension   
         
         #print(context_txt)
         return context,context_bbox,caption_encoded
@@ -140,6 +145,8 @@ class SP_VQADataset(Dataset):
     def get_start_end_answer_idx(self, context, annotations_data):
         answers = annotations_data['answers']
         answer_encoded = self.tokenizer.encode(answers, max_length=self.max_len_answer, pad_to_max_length=True, return_attention_mask=True, return_token_type_ids=False, truncation=True,return_tensors = 'pt')
+        answer_encoded = answer_encoded.squeeze()
+        
         context_joined = "".join(context)
         answer_positions = []
         for answer in answers:

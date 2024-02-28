@@ -46,6 +46,7 @@ class SpatialEmbeddings(nn.Module):
         #self.config = config
 
     def forward(self, bbox):
+        print(bbox.shape)
         left_position_embeddings = self.x_position_embeddings(bbox[:, :,0])
         upper_position_embeddings = self.y_position_embeddings(bbox[:, :,1])
         right_position_embeddings = self.x_position_embeddings(bbox[:, :,2])
@@ -53,7 +54,9 @@ class SpatialEmbeddings(nn.Module):
 
         # h_position_embeddings = self.h_position_embeddings(bbox[:, :, 3] - bbox[:, :, 1])  # TODO Remove width and height to test how much important are they.
         # w_position_embeddings = self.w_position_embeddings(bbox[:, :, 2] - bbox[:, :, 0])  # TODO Remove width and height to test how much important are they.
-
+        #
+        print(left_position_embeddings.shape)
+        print(upper_position_embeddings.shape)
         embeddings = (
                 left_position_embeddings
                 + upper_position_embeddings
@@ -91,7 +94,8 @@ class VisualEmbeddings(nn.Module):
         model_link = 'microsoft/dit-base-finetuned-rvlcdip'
         self.feature_extractor = AutoFeatureExtractor.from_pretrained(model_link)
         self.image_model = AutoModel.from_pretrained(model_link).to(device)
-        self.visual_emb_matcher = MLP(self.image_model.config.hidden_size, 0, self.image_model.config.hidden_size, 1)
+        self.output_hidden_dim = 512 #Change this and put in the args file 
+        self.visual_emb_matcher = MLP(self.image_model.config.hidden_size, 0, self.output_hidden_dim , 1)
 
         '''if not config.visual_module_config.get('finetune', False):
             self.freeze()'''

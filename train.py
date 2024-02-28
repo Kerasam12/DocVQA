@@ -23,8 +23,8 @@ annotations_dir = '/home/jsamper/Desktop/DocVQA/Data/Annotations/train_v1.0_with
 ocr_dir = '/home/jsamper/Desktop/DocVQA/Data/OCR'
 images_dir = '/home/jsamper/Desktop/DocVQA/Data/Images'
 # Create an instance of the custom dataset
-new_width = 1500
-new_height = 2000 
+new_width = 1400
+new_height = 1980 
 reshape_transform = transforms.Compose([
     transforms.Resize((new_width, new_height)),  # Specify the new dimensions
     transforms.ToTensor(),  # Convert the image to a PyTorch tensor
@@ -33,7 +33,7 @@ reshape_transform = transforms.Compose([
 
 train_dataset = SP_VQADataset(annotations_dir, ocr_dir, images_dir, transform = reshape_transform, **kwargs)#max_len_answer = MAX_LEN_ANSWER, max_len_question = MAX_LEN_QUESTION, max_len_bbox = MAX_LEN_BBOX, max_len_str=MAX_LEN_STR, tokenizer = TOKENIZER)
 
-batch_size = 10
+batch_size = 128
 # Create the DataLoader
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
@@ -60,6 +60,7 @@ for step in range(epochs):
 
         output = model.forward(image, context, context_bbox)
         loss = model_gen(input_ids=output, labels=answer).loss
+        print(loss)
         loss.backward()
         optimizer.step()
         tot_loss += loss.item()

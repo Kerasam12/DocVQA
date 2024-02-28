@@ -22,8 +22,8 @@ annotations_dir = '/home/jsamper/Desktop/DocVQA/Data/Annotations/train_v1.0_with
 ocr_dir = '/home/jsamper/Desktop/DocVQA/Data/OCR'
 images_dir = '/home/jsamper/Desktop/DocVQA/Data/Images'
 # Create an instance of the custom dataset
-new_width = 1500
-new_height = 2000 
+new_width = 1400
+new_height = 1980
 reshape_transform = transforms.Compose([
     transforms.Resize((new_width, new_height)),  # Specify the new dimensions
     transforms.ToTensor(),  # Convert the image to a PyTorch tensor

@@ -6,12 +6,13 @@ import json
 import os
 
 from transformers import T5Tokenizer, T5Model
+from torch.nn.functional import normalize
 
 
 kwargs = {
     "MAX_LEN_STR" :512,
     "TOKENIZER": T5Tokenizer.from_pretrained('t5-small'),
-    "MAX_LEN_BBOX":290,
+    "MAX_LEN_BBOX":310,
     "MAX_LEN_QUESTION":80,
     "MAX_LEN_ANSWER":50
 }
@@ -19,7 +20,7 @@ kwargs = {
 
 
 class SP_VQADataset(Dataset):
-    def __init__(self, annotations_dir, ocr_dir, images_dir, transform, **kwargs): 
+    def __init__(self, annotations_dir, ocr_dir, images_dir,transform,  **kwargs): #
         #max_len_bbox,max_len_str, tokenizer, max_len_question,max_len_answer):
         # Initialize the ColorizationDataset class with the specified root directory and transformation
         self.max_len_str = kwargs['MAX_LEN_STR']#max_len_str
@@ -105,11 +106,18 @@ class SP_VQADataset(Dataset):
         
 
         expanded_bbox = padding_bbox.unsqueeze(0).repeat(pad_len_bbox, 1)
-        context_bbox = torch.tensor(context_bbox).reshape((len(context_bbox),-1))#4,2))
-        #print(expanded_bbox.shape)
-        #print(context_bbox.shape)
-        context_bbox = torch.cat([context_bbox, expanded_bbox], dim=0)# Concatenate the padding along the first dimension   
         
+        if len(context_bbox) != 0:
+            context_bbox = torch.tensor(context_bbox).reshape((len(context_bbox),-1))#4,2))
+            min_values, _ = torch.min(context_bbox, dim=1, keepdim=True)
+            max_values, _ = torch.max(context_bbox, dim=1, keepdim=True)
+            context_bbox =(1980 * (context_bbox - min_values) / (max_values - min_values)).round().to(torch.int32)
+
+            #print(expanded_bbox.shape)
+            #print(context_bbox.shape)
+            context_bbox = torch.cat([context_bbox, expanded_bbox], dim=0)# Concatenate the padding along the first dimension   
+        else:
+            context_bbox = expanded_bbox
         #print(context_txt)
         return context,context_bbox,caption_encoded
 

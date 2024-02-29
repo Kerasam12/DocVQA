@@ -7,6 +7,10 @@ from DataLoaderVQA import SP_VQADataset
 from VQAModel import ModelVT5
 from transformers import T5EncoderModel, T5Tokenizer, T5ForConditionalGeneration
 
+import wandb
+
+# Initialize WandB
+wandb.init(project='SP-DocVQA', name='Basic-DocVQA-OnlyTXT')
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -30,10 +34,10 @@ reshape_transform = transforms.Compose([
     transforms.ToTensor(),  # Convert the image to a PyTorch tensor
     
 ]) 
+#
+train_dataset = SP_VQADataset(annotations_dir, ocr_dir, images_dir, transform = reshape_transform,**kwargs)#max_len_answer = MAX_LEN_ANSWER, max_len_question = MAX_LEN_QUESTION, max_len_bbox = MAX_LEN_BBOX, max_len_str=MAX_LEN_STR, tokenizer = TOKENIZER)
 
-train_dataset = SP_VQADataset(annotations_dir, ocr_dir, images_dir, transform = reshape_transform, **kwargs)#max_len_answer = MAX_LEN_ANSWER, max_len_question = MAX_LEN_QUESTION, max_len_bbox = MAX_LEN_BBOX, max_len_str=MAX_LEN_STR, tokenizer = TOKENIZER)
-
-batch_size = 128
+batch_size = 16
 # Create the DataLoader
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
@@ -43,11 +47,18 @@ train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     print(data['question'], data['context'],data['context_bbox'], data['image'], data['answer'])'''
 model = ModelVT5().to(device)
 tokenizer =  T5Tokenizer.from_pretrained('t5-small')
-model_gen = T5ForConditionalGeneration.from_pretrained("t5-small")
+model_gen = T5ForConditionalGeneration.from_pretrained("t5-small").to(device)
 
 learning_rate = 0.0002
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-epochs = 10000
+epochs = 1000
+
+wandb.config.learning_rate = learning_rate
+wandb.config.batch_size = batch_size
+wandb.config.epochs = epochs
+#wandb.watch(model, criterion, log='all')
+
+
 for step in range(epochs):
     print('epoch:', step)
     tot_loss = 0
@@ -59,7 +70,9 @@ for step in range(epochs):
         answer = data['answer'].to(device)
 
         output = model.forward(image, context, context_bbox)
+        output = output.to(device)
         loss = model_gen(input_ids=output, labels=answer).loss
+        wandb.log({'loss': loss})
         print(loss)
         loss.backward()
         optimizer.step()

@@ -26,7 +26,7 @@ class SpatialEmbeddings(nn.Module):
         super(SpatialEmbeddings, self).__init__()
 
         self.position_embeddings = nn.Embedding(
-            4500, 64#config.max_2d_position_embeddings, config.hidden_size
+            1981, 64#config.max_2d_position_embeddings, config.hidden_size
         )
         '''self.y_position_embeddings = nn.Embedding(
             4500, 512#config.max_2d_position_embeddings, config.hidden_size
@@ -47,8 +47,9 @@ class SpatialEmbeddings(nn.Module):
 
     def forward(self, bbox):
         bs, num_bbox, dim = bbox.shape
+        
         position_embeddings = self.position_embeddings(bbox)
-        print(position_embeddings.shape)
+        #print(position_embeddings.shape)
         '''left_position_embeddings = self.x_position_embeddings(bbox[:, :,0])
         upper_position_embeddings = self.y_position_embeddings(bbox[:, :,1])
         right_position_embeddings = self.x_position_embeddings(bbox[:, :,2])

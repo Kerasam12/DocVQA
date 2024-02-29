@@ -19,7 +19,7 @@ kwargs_dir = 'args.json'
 kwargs = {
     "MAX_LEN_STR" :512,
     "TOKENIZER": T5Tokenizer.from_pretrained('t5-small'),
-    "MAX_LEN_BBOX":290,
+    "MAX_LEN_BBOX":310,
     "MAX_LEN_QUESTION":80,
     "MAX_LEN_ANSWER":50
 }

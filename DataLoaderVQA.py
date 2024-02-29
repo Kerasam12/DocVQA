@@ -104,7 +104,7 @@ class SP_VQADataset(Dataset):
         caption_encoded = self.tokenizer.encode(context_txt, max_length=self.max_len_str, padding='max_length', return_attention_mask=True, return_token_type_ids=False, truncation=True,return_tensors = 'pt')
         caption_encoded =caption_encoded.squeeze(0)
         
-
+        #print(len(context_bbox), pad_len_bbox)
         expanded_bbox = padding_bbox.unsqueeze(0).repeat(pad_len_bbox, 1)
         
         if len(context_bbox) != 0:

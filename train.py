@@ -23,6 +23,10 @@ kwargs = {
     "MAX_LEN_QUESTION":80,
     "MAX_LEN_ANSWER":50
 }
+
+phisical_dev = "PC"
+path_strt = "paths.json"
+
 annotations_dir = '/home/jsamper/Desktop/DocVQA/Data/Annotations/train_v1.0_withQT.json'
 ocr_dir = '/home/jsamper/Desktop/DocVQA/Data/OCR'
 images_dir = '/home/jsamper/Desktop/DocVQA/Data/Images'
@@ -73,6 +77,7 @@ for step in range(epochs):
         output = model.forward(image, context, context_bbox)
         output = output.to(device)
         loss = model.model(input_ids=output, labels=answer).loss
+        
         wandb.log({'loss': loss})
         print(loss)
         loss.backward()

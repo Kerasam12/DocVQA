@@ -1,0 +1,32 @@
+2024-03-01 11:18:12,560 INFO    MainThread:388683 [wandb_setup.py:_flush():76] Current SDK version is 0.16.3
+2024-03-01 11:18:12,560 INFO    MainThread:388683 [wandb_setup.py:_flush():76] Configure stats pid to 388683
+2024-03-01 11:18:12,560 INFO    MainThread:388683 [wandb_setup.py:_flush():76] Loading settings from /home/jsamper/.config/wandb/settings
+2024-03-01 11:18:12,560 INFO    MainThread:388683 [wandb_setup.py:_flush():76] Loading settings from /home/jsamper/Desktop/DocVQA/Code/SP-JS_DocVQA/wandb/settings
+2024-03-01 11:18:12,560 INFO    MainThread:388683 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2024-03-01 11:18:12,560 INFO    MainThread:388683 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2024-03-01 11:18:12,560 INFO    MainThread:388683 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'train.py', 'program_abspath': '/home/jsamper/Desktop/DocVQA/Code/SP-JS_DocVQA/train.py', 'program': '/home/jsamper/Desktop/DocVQA/Code/SP-JS_DocVQA/train.py'}
+2024-03-01 11:18:12,561 INFO    MainThread:388683 [wandb_init.py:_log_setup():526] Logging user logs to /home/jsamper/Desktop/DocVQA/Code/SP-JS_DocVQA/wandb/run-20240301_111812-q162z0ez/logs/debug.log
+2024-03-01 11:18:12,561 INFO    MainThread:388683 [wandb_init.py:_log_setup():527] Logging internal logs to /home/jsamper/Desktop/DocVQA/Code/SP-JS_DocVQA/wandb/run-20240301_111812-q162z0ez/logs/debug-internal.log
+2024-03-01 11:18:12,561 INFO    MainThread:388683 [wandb_init.py:init():566] calling init triggers
+2024-03-01 11:18:12,561 INFO    MainThread:388683 [wandb_init.py:init():573] wandb.init called with sweep_config: {}
+config: {}
+2024-03-01 11:18:12,562 INFO    MainThread:388683 [wandb_init.py:init():616] starting backend
+2024-03-01 11:18:12,562 INFO    MainThread:388683 [wandb_init.py:init():620] setting up manager
+2024-03-01 11:18:12,565 INFO    MainThread:388683 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2024-03-01 11:18:12,569 INFO    MainThread:388683 [wandb_init.py:init():628] backend started and connected
+2024-03-01 11:18:12,589 INFO    MainThread:388683 [wandb_init.py:init():720] updated telemetry
+2024-03-01 11:18:12,604 INFO    MainThread:388683 [wandb_init.py:init():753] communicating run to backend with 90.0 second timeout
+2024-03-01 11:18:13,317 INFO    MainThread:388683 [wandb_run.py:_on_init():2262] communicating current version
+2024-03-01 11:18:13,515 INFO    MainThread:388683 [wandb_run.py:_on_init():2271] got version response 
+2024-03-01 11:18:13,515 INFO    MainThread:388683 [wandb_init.py:init():804] starting run threads in backend
+2024-03-01 11:18:18,525 INFO    MainThread:388683 [wandb_run.py:_console_start():2241] atexit reg
+2024-03-01 11:18:18,526 INFO    MainThread:388683 [wandb_run.py:_redirect():2096] redirect: wrap_raw
+2024-03-01 11:18:18,527 INFO    MainThread:388683 [wandb_run.py:_redirect():2161] Wrapping output streams.
+2024-03-01 11:18:18,528 INFO    MainThread:388683 [wandb_run.py:_redirect():2186] Redirects installed.
+2024-03-01 11:18:18,533 INFO    MainThread:388683 [wandb_init.py:init():847] run started, returning control to user process
+2024-03-01 11:18:23,603 INFO    MainThread:388683 [wandb_config.py:__setitem__():151] config set learning_rate = 2e-05 - <bound method Run._config_callback of <wandb.sdk.wandb_run.Run object at 0x7fd45d61ac60>>
+2024-03-01 11:18:23,603 INFO    MainThread:388683 [wandb_run.py:_config_callback():1343] config_cb learning_rate 2e-05 None
+2024-03-01 11:18:23,604 INFO    MainThread:388683 [wandb_config.py:__setitem__():151] config set batch_size = 16 - <bound method Run._config_callback of <wandb.sdk.wandb_run.Run object at 0x7fd45d61ac60>>
+2024-03-01 11:18:23,604 INFO    MainThread:388683 [wandb_run.py:_config_callback():1343] config_cb batch_size 16 None
+2024-03-01 11:18:23,604 INFO    MainThread:388683 [wandb_config.py:__setitem__():151] config set epochs = 1000 - <bound method Run._config_callback of <wandb.sdk.wandb_run.Run object at 0x7fd45d61ac60>>
+2024-03-01 11:18:23,605 INFO    MainThread:388683 [wandb_run.py:_config_callback():1343] config_cb epochs 1000 None

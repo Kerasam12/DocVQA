@@ -1,0 +1,62 @@
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+/home/jsamper/anaconda3/envs/myenv/lib/python3.12/site-packages/transformers/models/beit/feature_extraction_beit.py:28: FutureWarning: The class BeitFeatureExtractor is deprecated and will be removed in version 5 of Transformers. Please use BeitImageProcessor instead.
+  warnings.warn(
+/home/jsamper/anaconda3/envs/myenv/lib/python3.12/site-packages/transformers/models/beit/image_processing_beit.py:110: FutureWarning: The `reduce_labels` parameter is deprecated and will be removed in a future version. Please use `do_reduce_labels` instead.
+  warnings.warn(
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+/home/jsamper/anaconda3/envs/myenv/lib/python3.12/site-packages/transformers/tokenization_utils_base.py:2619: FutureWarning: The `pad_to_max_length` argument is deprecated and will be removed in a future version, use `padding=True` or `padding='longest'` to pad to the longest sequence in the batch, or use `padding='max_length'` to pad to a max length. In this case, you can give a specific length with `max_length` (e.g. `max_length=45`) or leave max_length to None to pad to the maximal input size of the model (e.g. 512 for Bert).
+  warnings.warn(
+epoch: 0
+It looks like you are trying to rescale already rescaled images. If the input images have pixel values between 0 and 1, set `do_rescale=False` to avoid rescaling them again.
+/home/jsamper/anaconda3/envs/myenv/lib/python3.12/site-packages/transformers/tokenization_utils_base.py:2619: FutureWarning: The `pad_to_max_length` argument is deprecated and will be removed in a future version, use `padding=True` or `padding='longest'` to pad to the longest sequence in the batch, or use `padding='max_length'` to pad to a max length. In this case, you can give a specific length with `max_length` (e.g. `max_length=45`) or leave max_length to None to pad to the maximal input size of the model (e.g. 512 for Bert).
+  warnings.warn(
+tensor(13.9436, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(13.1055, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(12.6948, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(9.3118, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(10.2788, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(11.3796, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(3.8024, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(8.9993, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(9.9044, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(7.1067, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(7.5123, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(3.8327, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(5.9645, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(5.3013, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(3.6050, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(4.8140, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(5.4975, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(4.1840, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(7.0946, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(3.3846, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(5.6891, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(4.4444, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(4.4164, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(3.6581, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(5.9888, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(3.2141, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.3154, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(3.2139, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.7914, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(3.5423, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.3851, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(3.3703, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.9344, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.3524, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.8096, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.3778, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.5648, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(1.7596, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.1976, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.7881, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(3.5495, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.5953, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.4216, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.4486, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.9945, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.1187, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.5252, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.6352, device='cuda:0', grad_fn=<NllLossBackward0>)
+tensor(2.4992, device='cuda:0', grad_fn=<NllLossBackward0>)

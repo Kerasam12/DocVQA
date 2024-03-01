@@ -34,6 +34,7 @@ class SP_VQADataset(Dataset):
         self.images_dir = images_dir
         self.transform = transform
         self.tokenizer = kwargs['TOKENIZER']#tokenizer 
+        self.tokenizer.add_tokens('<no_answ>')
         #self.transform = transform
         # Get a list of image files in the root directory
         self.ocr_files = [f for f in os.listdir(ocr_dir) if os.path.isfile(os.path.join(ocr_dir, f))]

@@ -1,0 +1,92 @@
+{
+    "os": "Linux-6.5.0-21-generic-x86_64-with-glibc2.35",
+    "python": "3.12.1",
+    "heartbeatAt": "2024-03-01T10:20:57.339880",
+    "startedAt": "2024-03-01T10:20:56.413397",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/home/jsamper/Desktop/DocVQA/Code/SP-JS_DocVQA/train.py",
+    "codePathLocal": "train.py",
+    "codePath": "train.py",
+    "git": {
+        "remote": "git@github.com:Kerasam12/DocVQA.git",
+        "commit": "51ebf8c81ec8f7fb9486dbefdf3c6d0f691e6dc1"
+    },
+    "email": "kerasam12@gmail.com",
+    "root": "/home/jsamper/Desktop/DocVQA/Code/SP-JS_DocVQA",
+    "host": "cvc117",
+    "username": "jsamper",
+    "executable": "/home/jsamper/anaconda3/envs/myenv/bin/python",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 1.5051249999999998,
+        "min": 1200.0,
+        "max": 3900.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 1.2,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.676,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1.317,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1.2,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1.199,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.665,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1.229,
+            "min": 1200.0,
+            "max": 3900.0
+        },
+        {
+            "current": 1.2,
+            "min": 1200.0,
+            "max": 3900.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 908.483943939209,
+            "used": 70.95392608642578
+        }
+    },
+    "gpu": "Quadro P400",
+    "gpu_count": 2,
+    "gpu_devices": [
+        {
+            "name": "Quadro P400",
+            "memory_total": 2147483648
+        },
+        {
+            "name": "NVIDIA GeForce GTX 1080 Ti",
+            "memory_total": 11811160064
+        }
+    ],
+    "memory": {
+        "total": 62.475128173828125
+    }
+}

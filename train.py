@@ -37,7 +37,7 @@ reshape_transform = transforms.Compose([
 #
 train_dataset = SP_VQADataset(annotations_dir, ocr_dir, images_dir, transform = reshape_transform,**kwargs)#max_len_answer = MAX_LEN_ANSWER, max_len_question = MAX_LEN_QUESTION, max_len_bbox = MAX_LEN_BBOX, max_len_str=MAX_LEN_STR, tokenizer = TOKENIZER)
 
-batch_size = 16
+batch_size = 8
 # Create the DataLoader
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
@@ -47,9 +47,9 @@ train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     print(data['question'], data['context'],data['context_bbox'], data['image'], data['answer'])'''
 model = ModelVT5().to(device)
 tokenizer =  T5Tokenizer.from_pretrained('t5-small')
-model_gen = T5ForConditionalGeneration.from_pretrained("t5-small").to(device)
+#model_gen = T5ForConditionalGeneration.from_pretrained("t5-small").to(device)
 
-learning_rate = 0.0002
+learning_rate = 0.00002
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 epochs = 1000
 
@@ -62,6 +62,7 @@ wandb.config.epochs = epochs
 for step in range(epochs):
     print('epoch:', step)
     tot_loss = 0
+    model.train()
     for data in train_loader:
         question = data['question'].to(device)
         context = data['context'].to(device)#ocr tokenized ids text
@@ -71,7 +72,7 @@ for step in range(epochs):
 
         output = model.forward(image, context, context_bbox)
         output = output.to(device)
-        loss = model_gen(input_ids=output, labels=answer).loss
+        loss = model.model(input_ids=output, labels=answer).loss
         wandb.log({'loss': loss})
         print(loss)
         loss.backward()
